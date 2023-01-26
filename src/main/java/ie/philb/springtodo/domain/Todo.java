@@ -5,16 +5,17 @@
 package ie.philb.springtodo.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  *
@@ -28,16 +29,22 @@ public class Todo implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "todo_id_seq")
     private int id;
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date created;
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime created;
+
+    @UpdateTimestamp
+    private LocalDateTime updated;
 
     @ManyToOne
     private User owner;
 
+    @NotEmpty(message = "Title field can't be empty")
     private String title;
 
+    @NotEmpty(message = "Description field can't be empty")
     private String description;
 
-    private TodoStatus status;
+    private TodoStatus status = TodoStatus.Pending;
 
 }

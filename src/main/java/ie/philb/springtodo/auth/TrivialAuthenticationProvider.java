@@ -34,7 +34,8 @@ public class TrivialAuthenticationProvider implements AuthenticationProvider {
 
     private boolean isAuthenticated(Authentication auth) {
         String login = auth.getName();
-        return ("bobs".equalsIgnoreCase(login));
+        //return ("bobs".equalsIgnoreCase(login));
+        return true;
     }
 
     private Authentication createAuthentication(String login, String password) {

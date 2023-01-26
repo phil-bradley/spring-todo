@@ -5,6 +5,7 @@
 package ie.philb.springtodo.repository;
 
 import ie.philb.springtodo.domain.Todo;
+import ie.philb.springtodo.domain.User;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +15,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface TodoRepository extends JpaRepository<Todo, Integer> {
  
-    List<Todo> findByOwner(int userId);
+    List<Todo> findByOwner(User owner);
 }

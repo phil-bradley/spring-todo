@@ -26,18 +26,21 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public Todo getTodoById(long id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Todo getTodoById(int id) {
+        return todoRepository.getById(id);
     }
 
     @Override
     public Todo save(Todo todo) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        User owner = new User();
+        owner.setId(1);
+        todo.setOwner(owner);
+        return todoRepository.save(todo);
     }
 
     @Override
-    public List<Todo> getTodosByOwner(User user) {
-        return todoRepository.findByOwner(user.getId());
+    public List<Todo> getTodosByOwner(User owner) {
+        return todoRepository.findByOwner(owner);
     }
 
 }

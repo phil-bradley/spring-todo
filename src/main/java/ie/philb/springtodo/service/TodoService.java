@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface TodoService {
 
-    Todo getTodoById(long id);
+    Todo getTodoById(int id);
 
     Todo save(Todo todo);
 
