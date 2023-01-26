@@ -36,7 +36,7 @@
                                 <tr th:each="todo : ${todos}">
                                     <td th:text="${todo.id}"></td>
                                     <td th:text="${todo.title}"></td>
-                                    <td th:text="${todo.created}"></td>
+                                    <td th:text="${#temporals.format(todo.created, 'dd MMM yyyy HH:mm:ss')}"></td>
                                     <td th:text="${todo.status}"></td>
                                     <td><a th:href="@{/update/{id}(id=${todo.id})}" class="btn btn-primary"><i class="fas fa-edit"></i></a></td>
                                     <td>

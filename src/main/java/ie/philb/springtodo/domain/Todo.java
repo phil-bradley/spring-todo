@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -40,9 +41,11 @@ public class Todo implements Serializable {
     private User owner;
 
     @NotEmpty(message = "Title field can't be empty")
+    @Size(min = 1, max = 32)
     private String title;
 
     @NotEmpty(message = "Description field can't be empty")
+    @Size(min = 1, max = 2048)
     private String description;
 
     private TodoStatus status = TodoStatus.Pending;
