@@ -6,7 +6,7 @@ package ie.philb.springtodo.controller;
 
 import ie.philb.springtodo.domain.Todo;
 import ie.philb.springtodo.domain.User;
-import ie.philb.springtodo.formdata.TodoFormData;
+import ie.philb.springtodo.domain.dto.TodoDto;
 import ie.philb.springtodo.service.TodoService;
 import java.util.List;
 import javax.validation.Valid;
@@ -49,21 +49,18 @@ public class WebUiController {
     }
 
     @GetMapping("/newtodo")
-    public String showTodoForm(TodoFormData todoFormData) {
+    public String showTodoForm(TodoDto todoDto) {
         return "todoform";
     }
 
     @PostMapping("/newtodo")
-    public String addTodo(@Valid TodoFormData todoFormData, BindingResult result, Model model) {
-        
+    public String addTodo(@Valid TodoDto todoDto, BindingResult result, Model model) {
+
         if (result.hasErrors()) {
             return "todoform";
         }
-        
-        Todo todo = new Todo();
-        todo.setTitle(todoFormData.getTitle());
-        todo.setDescription(todoFormData.getDescription());
-        
+
+        Todo todo = todoDto.getTodo();
         todoService.save(todo);
         return "redirect:/todos";
     }

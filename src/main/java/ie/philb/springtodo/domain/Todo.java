@@ -4,9 +4,11 @@
  */
 package ie.philb.springtodo.domain;
 
+import ie.philb.springtodo.repository.TodoStatusConverter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,6 +50,7 @@ public class Todo implements Serializable {
     @Size(min = 1, max = 2048)
     private String description;
 
+    @Convert(converter = TodoStatusConverter.class)
     private TodoStatus status = TodoStatus.Pending;
 
 }
