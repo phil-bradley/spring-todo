@@ -4,6 +4,7 @@
  */
 package ie.philb.springtodo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ie.philb.springtodo.repository.TodoStatusConverter;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -43,6 +44,7 @@ public class Todo implements Serializable {
     private LocalDateTime updated;
 
     @ManyToOne
+    @JsonIgnore
     private User owner;
 
     @NotEmpty
