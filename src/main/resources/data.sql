@@ -7,4 +7,4 @@
  * Created: 28 Feb 2022
  */
 
-insert into user (id, login, password_hash, password_salt, first_name, sur_name) values (1, 'bobs', 'ABCD124', '1111', 'Bob', 'Smith');
+-- insert into user (id, login, password_hash, password_salt, first_name, sur_name) values (1, 'bobs', 'ABCD124', '1111', 'Bob', 'Smith');
