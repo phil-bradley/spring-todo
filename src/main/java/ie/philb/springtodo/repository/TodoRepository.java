@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author Philip.Bradley
  */
-public interface TodoRepository extends JpaRepository<Todo, Integer> {
+public interface TodoRepository extends JpaRepository<Todo, Long> {
  
     List<Todo> findByOwner(User owner);
 }

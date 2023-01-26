@@ -13,7 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -26,11 +28,12 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @Data
 @Entity
+@Table(indexes = @Index(name = "todo_user_idx", columnList = "OWNER_ID"))
 public class Todo implements Serializable {
 
     @Id()
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "todo_id_seq")
-    private int id;
+    private long id;
 
     @Column(updatable = false)
     @CreationTimestamp
@@ -42,11 +45,11 @@ public class Todo implements Serializable {
     @ManyToOne
     private User owner;
 
-    @NotEmpty(message = "Title field can't be empty")
+    @NotEmpty
     @Size(min = 1, max = 32)
     private String title;
 
-    @NotEmpty(message = "Description field can't be empty")
+    @NotEmpty
     @Size(min = 1, max = 2048)
     private String description;
 

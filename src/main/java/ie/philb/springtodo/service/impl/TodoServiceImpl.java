@@ -26,7 +26,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public Todo getTodoById(int id) {
+    public Todo getTodoById(long id) {
         return todoRepository.getById(id);
     }
 

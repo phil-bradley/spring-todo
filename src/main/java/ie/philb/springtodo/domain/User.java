@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import lombok.Data;
 
@@ -19,11 +21,13 @@ import lombok.Data;
  */
 @Data
 @Entity
+@Table(indexes = @Index(name = "user_login_idx", columnList = "LOGIN"))
+
 public class User implements Serializable {
 
     @Id()
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
-    private int id;
+    private long id;
 
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date created;
@@ -32,9 +36,9 @@ public class User implements Serializable {
     private Date lastUpdated;
 
     private String login;
-    
+
     private String firstName;
-    
+
     private String surName;
 
     private String passwordHash;
