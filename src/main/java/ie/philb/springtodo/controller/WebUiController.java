@@ -71,8 +71,19 @@ public class WebUiController {
     }
 
     @GetMapping("/update/{id}")
-    public String showUpdateTodoForm(@PathVariable("id") long id, Model model) {
-        model.addAttribute("todo", todoService.getTodoById(id));
+    public String showUpdateTodoForm(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, Model model) {
+
+        Todo todo = todoService.getTodoById(id);
+
+        if (todo == null) {
+            throw new IllegalArgumentException("Cannot find entry " + id);
+        }
+
+        if (todo.getOwner().getId() != user.getUser().getId()) {
+            throw new IllegalArgumentException("Cannot modify entry " + id);
+        }
+
+        model.addAttribute("todo", todo);
         return "update-todo";
     }
 
