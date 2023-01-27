@@ -32,9 +32,6 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public Todo save(Todo todo) {
-        User owner = new User();
-        owner.setId(100);
-        todo.setOwner(owner);
         return todoRepository.save(todo);
     }
 

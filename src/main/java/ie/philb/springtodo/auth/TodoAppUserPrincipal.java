@@ -7,6 +7,7 @@ package ie.philb.springtodo.auth;
 import ie.philb.springtodo.domain.User;
 import java.util.Collection;
 import java.util.Collections;
+import lombok.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,10 +20,14 @@ public class TodoAppUserPrincipal implements UserDetails {
 
     private final User user;
 
-    public TodoAppUserPrincipal(User user) {
+    public TodoAppUserPrincipal(@NonNull User user) {
         this.user = user;
     }
 
+    public User getUser() {
+        return user;
+    }
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.<GrantedAuthority>singletonList(new SimpleGrantedAuthority("User"));
@@ -56,5 +61,14 @@ public class TodoAppUserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return user.toString();
+    }
+
+    public String getDisplayName() {
+        return user.getFirstName() + " " + user.getSurName();
     }
 }

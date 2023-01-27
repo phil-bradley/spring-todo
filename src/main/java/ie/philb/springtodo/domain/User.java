@@ -15,6 +15,7 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  *
@@ -43,6 +44,7 @@ public class User implements Serializable {
 
     private String surName;
 
+    @ToString.Exclude
     private String password;
 
 }

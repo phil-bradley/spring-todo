@@ -8,3 +8,4 @@
  */
 
 insert into user (id, login, password, first_name, sur_name) values (100, 'bobs', '{noop}mypass', 'Bob', 'Smith');
+insert into user (id, login, password, first_name, sur_name) values (101, 'fred', '{noop}mypass', 'Fred', 'Jones');
