@@ -11,6 +11,8 @@ import ie.philb.springtodo.domain.dto.TodoDto;
 import ie.philb.springtodo.service.TodoService;
 import java.util.List;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 @Controller
 public class WebUiController {
 
+    private static final Logger logger = LoggerFactory.getLogger(WebUiController.class);
+
     private final TodoService todoService;
 
     @Autowired
@@ -36,8 +40,6 @@ public class WebUiController {
         this.todoService = todoService;
     }
 
-    // Default page will be the "home" page based on home.html defined in templates
-    // Contains meta data about the project
     @GetMapping("/")
     public String home(@AuthenticationPrincipal TodoAppUserPrincipal user, Model model) {
         model.addAttribute("currentUser", user);
@@ -66,7 +68,8 @@ public class WebUiController {
         Todo todo = todoDto.getTodo();
         todo.setOwner(user.getUser());
 
-        todoService.save(todo);
+        Todo saved = todoService.save(todo);
+        logger.info("Saved todo {}", todo);
         return "redirect:/todos";
     }
 
@@ -76,10 +79,12 @@ public class WebUiController {
         Todo todo = todoService.getTodoById(id);
 
         if (todo == null) {
+            logger.error("Could not find todo {}, user {}", id, user);
             throw new IllegalArgumentException("Cannot find entry " + id);
         }
 
         if (todo.getOwner().getId() != user.getUser().getId()) {
+            logger.error("Could not modify todo {} from user {}", id, user);
             throw new IllegalArgumentException("Cannot modify entry " + id);
         }
 
@@ -97,10 +102,12 @@ public class WebUiController {
         Todo original = todoService.getTodoById(id);
 
         if (original == null) {
+            logger.error("Could not find todo {}, user {}", id, user);
             throw new IllegalArgumentException("Cannot find entry " + id);
         }
 
         if (original.getOwner().getId() != user.getUser().getId()) {
+            logger.error("Could not modify todo {} from user {}", id, user);
             throw new IllegalArgumentException("Cannot modify entry " + id);
         }
 
@@ -118,14 +125,17 @@ public class WebUiController {
         Todo todo = todoService.getTodoById(id);
 
         if (todo == null) {
+            logger.error("Could not find todo {}, user {}", id, user);
             throw new IllegalArgumentException("Cannot find entry " + id);
         }
 
         if (todo.getOwner().getId() != user.getUser().getId()) {
+            logger.error("Could not modify todo {} from user {}", id, user);
             throw new IllegalArgumentException("Cannot modify entry " + id);
         }
 
         if (todo.isComplete()) {
+            logger.error("Could not complete already completed todo {}, user {}", id, user);
             throw new IllegalArgumentException("Cannot complete entry " + id);
         }
 
@@ -141,14 +151,17 @@ public class WebUiController {
         Todo todo = todoService.getTodoById(id);
 
         if (todo == null) {
+            logger.error("Could not find todo {}, user {}", id, user);
             throw new IllegalArgumentException("Cannot find entry " + id);
         }
 
         if (todo.getOwner().getId() != user.getUser().getId()) {
+            logger.error("Could not modify todo {} from user {}", id, user);
             throw new IllegalArgumentException("Cannot modify entry " + id);
         }
 
         if (!todo.isComplete()) {
+            logger.error("Could not delete open todo {}, user {}", id, user);
             throw new IllegalArgumentException("Cannot delete entry " + id + " with status " + todo.getStatus());
         }
 

@@ -9,6 +9,8 @@ import ie.philb.springtodo.domain.Todo;
 import ie.philb.springtodo.domain.User;
 import ie.philb.springtodo.service.TodoService;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/todos")
 public class TodoController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TodoController.class);
 
     private final TodoService todoService;
 
@@ -43,10 +47,12 @@ public class TodoController {
         Todo todo = todoService.getTodoById(id);
 
         if (todo == null) {
+            logger.error("Could not find todo {}, user {}", id, user());
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
         if (todo.getOwner().getId() != user().getId()) {
+            logger.error("Could not modify todo {} from user {}", id, user());
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
