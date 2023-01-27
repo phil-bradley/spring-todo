@@ -8,6 +8,8 @@ import ie.philb.springtodo.auth.TodoAppUserPrincipal;
 import ie.philb.springtodo.domain.Todo;
 import ie.philb.springtodo.domain.TodoStatus;
 import ie.philb.springtodo.domain.dto.TodoDto;
+import ie.philb.springtodo.exception.TodoException;
+import ie.philb.springtodo.exception.TodoStateException;
 import ie.philb.springtodo.service.TodoService;
 import java.util.List;
 import javax.validation.Valid;
@@ -59,7 +61,7 @@ public class WebUiController {
     }
 
     @PostMapping("/newtodo")
-    public String addTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @Valid TodoDto todoDto, BindingResult result, Model model) {
+    public String addTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @Valid TodoDto todoDto, BindingResult result, Model model) throws TodoException {
 
         if (result.hasErrors()) {
             return "todoform";
@@ -68,104 +70,79 @@ public class WebUiController {
         Todo todo = todoDto.getTodo();
         todo.setOwner(user.getUser());
 
-        Todo saved = todoService.save(todo);
-        logger.info("Saved todo {}", todo);
+        Todo saved = todoService.save(todo, user.getUser());
+        logger.info("Saved todo {}", saved);
         return "redirect:/todos";
     }
 
     @GetMapping("/update/{id}")
-    public String showUpdateTodoForm(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, Model model) {
+    public String showUpdateTodoForm(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, Model model) throws TodoException {
 
-        Todo todo = todoService.getTodoById(id);
-
-        if (todo == null) {
-            logger.error("Could not find todo {}, user {}", id, user);
-            throw new IllegalArgumentException("Cannot find entry " + id);
+        try {
+            Todo todo = todoService.getTodoById(id, user.getUser());
+            model.addAttribute("todo", todo);
+        } catch (TodoException tdx) {
+            model.addAttribute("exception", tdx);
+            return "error";
         }
 
-        if (todo.getOwner().getId() != user.getUser().getId()) {
-            logger.error("Could not modify todo {} from user {}", id, user);
-            throw new IllegalArgumentException("Cannot modify entry " + id);
-        }
-
-        model.addAttribute("todo", todo);
         return "update-todo";
     }
 
     @PutMapping("/update/{id}")
-    public String updateTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, @Valid TodoDto todoDto, BindingResult result, Model model) {
+    public String updateTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, @Valid TodoDto todoDto, BindingResult result, Model model) throws TodoException {
 
         if (result.hasErrors()) {
             return "update-todo";
         }
 
-        Todo original = todoService.getTodoById(id);
+        try {
+            Todo original = todoService.getTodoById(id, user.getUser());
+            original.setDescription(todoDto.getDescription());
+            original.setTitle(todoDto.getTitle());
 
-        if (original == null) {
-            logger.error("Could not find todo {}, user {}", id, user);
-            throw new IllegalArgumentException("Cannot find entry " + id);
+            todoService.save(original, user.getUser());
+
+        } catch (TodoException tdx) {
+            model.addAttribute("exception", tdx);
+            return "error";
         }
-
-        if (original.getOwner().getId() != user.getUser().getId()) {
-            logger.error("Could not modify todo {} from user {}", id, user);
-            throw new IllegalArgumentException("Cannot modify entry " + id);
-        }
-
-        original.setDescription(todoDto.getDescription());
-        original.setTitle(todoDto.getTitle());
-
-        todoService.save(original);
 
         return "redirect:/todos";
     }
 
     @PostMapping("/complete/{id}")
-    public String completeTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id) {
+    public String completeTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, Model model) throws TodoException {
 
-        Todo todo = todoService.getTodoById(id);
+        try {
+            Todo todo = todoService.getTodoById(id, user.getUser());
 
-        if (todo == null) {
-            logger.error("Could not find todo {}, user {}", id, user);
-            throw new IllegalArgumentException("Cannot find entry " + id);
+            if (todo.isComplete()) {
+                logger.error("Could not complete already completed todo {}, user {}", id, user);
+                throw new TodoStateException(todo);
+            }
+
+            todo.setStatus(TodoStatus.Complete);
+            todoService.save(todo, user.getUser());
+
+        } catch (TodoException tdx) {
+            model.addAttribute("exception", tdx);
+            return "error";
         }
-
-        if (todo.getOwner().getId() != user.getUser().getId()) {
-            logger.error("Could not modify todo {} from user {}", id, user);
-            throw new IllegalArgumentException("Cannot modify entry " + id);
-        }
-
-        if (todo.isComplete()) {
-            logger.error("Could not complete already completed todo {}, user {}", id, user);
-            throw new IllegalArgumentException("Cannot complete entry " + id);
-        }
-
-        todo.setStatus(TodoStatus.Complete);
-        todoService.save(todo);
 
         return "redirect:/todos";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id) {
+    public String deleteTodo(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, Model model) throws TodoException {
 
-        Todo todo = todoService.getTodoById(id);
-
-        if (todo == null) {
-            logger.error("Could not find todo {}, user {}", id, user);
-            throw new IllegalArgumentException("Cannot find entry " + id);
+        try {
+            Todo todo = todoService.getTodoById(id, user.getUser());
+            todoService.delete(todo, user.getUser());
+        } catch (TodoException tdx) {
+            model.addAttribute("exception", tdx);
+            return "error";
         }
-
-        if (todo.getOwner().getId() != user.getUser().getId()) {
-            logger.error("Could not modify todo {} from user {}", id, user);
-            throw new IllegalArgumentException("Cannot modify entry " + id);
-        }
-
-        if (!todo.isComplete()) {
-            logger.error("Could not delete open todo {}, user {}", id, user);
-            throw new IllegalArgumentException("Cannot delete entry " + id + " with status " + todo.getStatus());
-        }
-
-        todoService.delete(todo);
 
         return "redirect:/todos";
     }

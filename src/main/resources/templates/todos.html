@@ -13,6 +13,7 @@
         <a href="/">Home</a>
         <a href="/logout">Logout</a>
         <br/><br/>
+        <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 
         <div th:switch="${#lists.size(todos)}" class="container my-5">
             <div class="row">

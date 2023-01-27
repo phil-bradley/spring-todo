@@ -12,7 +12,6 @@ import ie.philb.springtodo.service.TodoService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +57,7 @@ public class TodoRestServiceTests {
     @Test
     @Disabled
     public void getTodoReturnsSingleTodo() throws Exception {
-        when(todoService.getTodoById(1234)).thenReturn(buildTodo());
+        when(todoService.getTodoById(1234, any())).thenReturn(buildTodo());
 
         mockMvc.perform(get("/todo/1234"))
                 .andExpect(jsonPath("$.title").isNotEmpty());

@@ -7,6 +7,10 @@ package ie.philb.springtodo.controller;
 import ie.philb.springtodo.auth.TodoAppUserPrincipal;
 import ie.philb.springtodo.domain.Todo;
 import ie.philb.springtodo.domain.User;
+import ie.philb.springtodo.exception.TodoAccessException;
+import ie.philb.springtodo.exception.TodoException;
+import ie.philb.springtodo.exception.TodoNotFoundException;
+import ie.philb.springtodo.exception.TodoStateException;
 import ie.philb.springtodo.service.TodoService;
 import java.util.List;
 import org.slf4j.Logger;
@@ -42,21 +46,17 @@ public class TodoController {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Todo> getTodo(@PathVariable("id") long id) {
-
-        Todo todo = todoService.getTodoById(id);
-
-        if (todo == null) {
-            logger.error("Could not find todo {}, user {}", id, user());
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<Todo> getTodo(@PathVariable("id") long id) throws TodoException {
+        try {
+            Todo todo = todoService.getTodoById(id, user());
+            return new ResponseEntity<>(todo, HttpStatus.OK);
+        } catch (TodoNotFoundException notFoundEx) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (TodoAccessException accessEx) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (TodoStateException stateEx) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-
-        if (todo.getOwner().getId() != user().getId()) {
-            logger.error("Could not modify todo {} from user {}", id, user());
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
-
-        return new ResponseEntity<>(todo, HttpStatus.OK);
     }
 
     private User user() {
