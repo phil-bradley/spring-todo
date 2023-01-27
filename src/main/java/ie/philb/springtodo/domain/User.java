@@ -6,6 +6,7 @@ package ie.philb.springtodo.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,13 +36,13 @@ public class User implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date lastUpdated;
 
+    @Column(nullable = false, unique = true)
     private String login;
 
     private String firstName;
 
     private String surName;
 
-    private String passwordHash;
+    private String password;
 
-    private String passwordSalt;
 }
