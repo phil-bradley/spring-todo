@@ -33,7 +33,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public Todo save(Todo todo) {
         User owner = new User();
-        owner.setId(1);
+        owner.setId(100);
         todo.setOwner(owner);
         return todoRepository.save(todo);
     }
@@ -41,6 +41,16 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public List<Todo> getTodosByOwner(User owner) {
         return todoRepository.findByOwner(owner);
+    }
+
+    @Override
+    public void delete(Todo todo) {
+
+        if (!todo.isComplete()) {
+            throw new IllegalStateException("Cannot delete todo with status " + todo.getStatus());
+        }
+
+        todoRepository.delete(todo);
     }
 
 }

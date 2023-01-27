@@ -20,4 +20,6 @@ public interface TodoService {
     Todo save(Todo todo);
 
     List<Todo> getTodosByOwner(User user);
+    
+    void delete(Todo todo);
 }

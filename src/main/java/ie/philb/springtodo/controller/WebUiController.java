@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +45,7 @@ public class WebUiController {
     @GetMapping("/todos")
     public String todos(Model model) {
         User user = new User();
-        user.setId(1);
+        user.setId(100);
         List<Todo> todos = todoService.getTodosByOwner(user);
 
         model.addAttribute("todos", todos);
@@ -94,12 +95,24 @@ public class WebUiController {
     public String completeTodo(@PathVariable("id") long id) {
 
         Todo todo = todoService.getTodoById(id);
-        
+
         if (todo.getStatus() == TodoStatus.Pending) {
             todo.setStatus(TodoStatus.Complete);
             todoService.save(todo);
         }
-        
+
+        return "redirect:/todos";
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteTodo(@PathVariable("id") long id) {
+
+        Todo todo = todoService.getTodoById(id);
+
+        if (todo.isComplete()) {
+            todoService.delete(todo);
+        }
+
         return "redirect:/todos";
     }
 }
