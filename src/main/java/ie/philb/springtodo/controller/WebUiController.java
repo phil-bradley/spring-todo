@@ -5,6 +5,7 @@
 package ie.philb.springtodo.controller;
 
 import ie.philb.springtodo.domain.Todo;
+import ie.philb.springtodo.domain.TodoStatus;
 import ie.philb.springtodo.domain.User;
 import ie.philb.springtodo.domain.dto.TodoDto;
 import ie.philb.springtodo.service.TodoService;
@@ -79,13 +80,26 @@ public class WebUiController {
         if (result.hasErrors()) {
             return "update-todo";
         }
-        
+
         Todo original = todoService.getTodoById(id);
         original.setDescription(todoDto.getDescription());
         original.setTitle(todoDto.getTitle());
-        
+
         todoService.save(original);
 
+        return "redirect:/todos";
+    }
+
+    @PostMapping("/complete/{id}")
+    public String completeTodo(@PathVariable("id") long id) {
+
+        Todo todo = todoService.getTodoById(id);
+        
+        if (todo.getStatus() == TodoStatus.Pending) {
+            todo.setStatus(TodoStatus.Complete);
+            todoService.save(todo);
+        }
+        
         return "redirect:/todos";
     }
 }

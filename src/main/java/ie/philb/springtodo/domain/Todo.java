@@ -58,4 +58,7 @@ public class Todo implements Serializable {
     @Convert(converter = TodoStatusConverter.class)
     private TodoStatus status = TodoStatus.Pending;
 
+    public boolean isComplete() {
+        return (status == TodoStatus.Complete);
+    }
 }

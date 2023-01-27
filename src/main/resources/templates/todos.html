@@ -34,6 +34,7 @@
                                     <th>Status</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
+                                    <th>Done</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,11 +46,19 @@
                                     <td><a th:href="@{/update/{id}(id=${todo.id})}" class="btn btn-primary"><i class="fas fa-edit"></i></a></td>
                                     <td>
                                         <form action="#" th:action="@{/delete/{id}(id=${todo.id})}" th:method="delete">
-                                            <button type="submit" class="btn btn-danger">
+                                            <button type="submit" class="btn btn-danger" th:disabled="${!todo.isComplete}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
                                     </td>
+                                    <td>
+                                        <form action="#" th:action="@{/complete/{id}(id=${todo.id})}" th:method="post">
+                                            <button type="submit" class="btn btn-primary" th:disabled="${todo.isComplete}">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+
                                 </tr>
                             </tbody>
                         </table>
