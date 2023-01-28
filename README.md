@@ -16,7 +16,7 @@ The user interface uses Thymeleaf for templating. A separate ReST api can also b
 While the business logic is trival (lookups of Todo and User entities), both the Todo and User entities are indexed as defined in their respective entity classes. Todo entities are indexed by owner while User entities are indexed by login since this is how those entities will be most commonly looked up.This ensures that lookups are as performant as possible.
 
 ## Security 
-Security is implemnted using Spring Boot Security. A custom authorisation principal TodoAppUserPrincipal is provided to the controller layer. This in turn provides a User object which is used by the service layer to enforce business level access control.
+Security is implemented using Spring Boot Security. A custom authorisation principal TodoAppUserPrincipal is provided to the controller layer. This in turn provides a User object which is used by the service layer to enforce business level access control.
 
 Two Users are defined in data.sql as follows:
 
