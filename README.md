@@ -37,7 +37,7 @@ Violations of business level constraints will result in a TodoException being th
 For the web based UI, a generic error page is shown when one of these is thrown. In the case of the ReST API, the HTTP status will indicate the error that has occurred.
 
 ## Building and execution
-The project can be built with a simple `mvn install` command. This results in a self contained executable jar that includes all dependencies. To run the application, use the command 
+The project is implemented is Java and requries Java 15+ along with the maven build system. Maven will automatically retrieve any dependencies. The project can be built with a simple `mvn install` command. This results in a self contained executable jar that includes all dependencies. To run the application, use the command 
 
 java -jar springtodo.jar
 
