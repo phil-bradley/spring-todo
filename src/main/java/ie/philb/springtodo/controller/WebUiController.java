@@ -78,11 +78,17 @@ public class WebUiController {
     @GetMapping("/update/{id}")
     public String showUpdateTodoForm(@AuthenticationPrincipal TodoAppUserPrincipal user, @PathVariable("id") long id, Model model) throws TodoException {
 
+        Todo todo = null;
         try {
-            Todo todo = todoService.getTodoById(id, user.getUser());
+            todo = todoService.getTodoById(id, user.getUser());
             model.addAttribute("todo", todo);
         } catch (TodoException tdx) {
             model.addAttribute("exception", tdx);
+            return "error";
+        }
+
+        if (todo.isComplete()) {
+            model.addAttribute("exception", new TodoStateException(todo));
             return "error";
         }
 
@@ -96,8 +102,9 @@ public class WebUiController {
             return "update-todo";
         }
 
+        Todo original = null;
         try {
-            Todo original = todoService.getTodoById(id, user.getUser());
+            original = todoService.getTodoById(id, user.getUser());
             original.setDescription(todoDto.getDescription());
             original.setTitle(todoDto.getTitle());
 
@@ -105,6 +112,11 @@ public class WebUiController {
 
         } catch (TodoException tdx) {
             model.addAttribute("exception", tdx);
+            return "error";
+        }
+
+        if (original.isComplete()) {
+            model.addAttribute("exception", new TodoStateException(original));
             return "error";
         }
 
