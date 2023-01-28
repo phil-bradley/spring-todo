@@ -5,6 +5,7 @@
     <artifactId>SpringTodo</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <name>SpringTodo</name>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -73,6 +74,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>springtodo</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
