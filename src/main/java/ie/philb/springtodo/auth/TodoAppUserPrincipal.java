@@ -7,7 +7,6 @@ package ie.philb.springtodo.auth;
 import ie.philb.springtodo.domain.User;
 import java.util.Collection;
 import java.util.Collections;
-import lombok.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +19,7 @@ public class TodoAppUserPrincipal implements UserDetails {
 
     private final User user;
 
-    public TodoAppUserPrincipal(@NonNull User user) {
+    public TodoAppUserPrincipal(User user) {
         this.user = user;
     }
 

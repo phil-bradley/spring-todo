@@ -4,7 +4,7 @@
  */
 package ie.philb.springtodo.integrationtests;
 
-import ie.philb.springtodo.controller.TodoController;
+import ie.philb.springtodo.common.WithCustomUser;
 import ie.philb.springtodo.domain.Todo;
 import ie.philb.springtodo.domain.TodoStatus;
 import ie.philb.springtodo.domain.User;
@@ -17,18 +17,21 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  *
  * @author Philip.Bradley
  */
-@WebMvcTest(TodoController.class)
+//@WebMvcTest(TodoController.class, )
+@SpringBootTest
+@AutoConfigureMockMvc
 public class TodoRestServiceTests {
 
     @MockBean
@@ -38,29 +41,57 @@ public class TodoRestServiceTests {
     private MockMvc mockMvc;
 
     @Test
-    public void unauthenticatedRequestIsDenied() throws Exception {
-
-        mockMvc.perform(get("/todos"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
-
+    public void unauthorisedRequestToLoginPageOk() throws Exception {
+        mockMvc.perform(get("/login")).andExpect(status().isOk());
     }
 
     @Test
+    public void unauthorisedRequestToEndpointDenied() throws Exception {
+        when(todoService.getTodosByOwner(any())).thenReturn(createTodoList());
+        mockMvc.perform(get("/todos")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithCustomUser(username = "bobs")
+    @Disabled
+    public void authorisedRequestReturnsOk() throws Exception {
+        mockMvc.perform(get("/todos")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithCustomUser(username = "bobs")
     @Disabled
     public void listTodosReturnsArrayOfTodo() throws Exception {
         when(todoService.getTodosByOwner(any())).thenReturn(createTodoList());
-
         mockMvc.perform(get("/todos"))
                 .andExpect(jsonPath("$.todos[0].title").isNotEmpty());
     }
 
     @Test
     @Disabled
+    @WithCustomUser(username = "bobs")
     public void getTodoReturnsSingleTodo() throws Exception {
-        when(todoService.getTodoById(1234, any())).thenReturn(buildTodo());
+        when(todoService.getTodoById(1, any())).thenReturn(buildTodo());
 
-        mockMvc.perform(get("/todo/1234"))
+        mockMvc.perform(get("/todo/1"))
                 .andExpect(jsonPath("$.title").isNotEmpty());
+    }
+
+    @Test
+    @Disabled
+    @WithCustomUser(username = "bobs")
+    public void getNonExistingTodoReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/todo/1234")).andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @Disabled
+    @WithCustomUser(username = "bobs")
+    public void getTodoNotOwnedReturnsUnuthorised() throws Exception {
+        when(todoService.getTodoById(1, any())).thenReturn(buildTodo());
+        mockMvc.perform(get("/todo/1234")).andExpect(status().isUnauthorized());
+
     }
 
     private List<Todo> createTodoList() {
@@ -86,6 +117,16 @@ public class TodoRestServiceTests {
 
         todo.setOwner(owner);
         return todo;
+    }
+
+    private User buildUser() {
+        User user = new User();
+        user.setId(1);
+        user.setLogin("fred");
+        user.setFirstName("Fred");
+        user.setSurName("Bloggs");
+
+        return user;
     }
 
 }

@@ -4,9 +4,15 @@
  */
 package ie.philb.springtodo;
 
+import ie.philb.springtodo.controller.WebUiController;
+import java.sql.SQLException;
+import org.h2.tools.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 
 /**
@@ -17,6 +23,8 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource("classpath:beans.xml")
 public class Main {
 
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(Main.class);
         application.addListeners(new ApplicationPidFileWriter());
@@ -24,9 +32,20 @@ public class Main {
     }
 
     // Allow remote access to DB using URL jdbc:h2:tcp://<ipaddress>:9092/mem:<dbname>
-//    @Bean(initMethod = "start", destroyMethod = "stop")
-//    public Server h2Server() throws SQLException {
-//        return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
-//    }
+    /*
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    public Server h2Server() {
 
+        Server server = null;
+        try {
+            logger.info("Starting H2 server...");
+            server = Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
+            logger.info("H2 server started");
+        } catch (SQLException ex) {
+            logger.error("Failed to start H2 server", ex);
+        }
+        
+        return server;
+    }
+     */
 }
