@@ -6,7 +6,6 @@ package ie.philb.springtodo.unittests;
 
 import ie.philb.springtodo.domain.TodoStatus;
 import ie.philb.springtodo.repository.TodoStatusConverter;
-import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
@@ -15,7 +14,7 @@ import org.junit.Test;
  *
  * @author Philip.Bradley
  */
-public class TestTodoStatusConversion {
+public class TodoStatusConversionTests {
 
     @Test
     public void todoStatusRetrievedFromCode() {

@@ -13,7 +13,7 @@ import ie.philb.springtodo.exception.TodoStateException;
 import ie.philb.springtodo.repository.TodoRepository;
 import ie.philb.springtodo.service.TodoService;
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
+import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,9 +37,9 @@ public class TodoServiceImpl implements TodoService {
         User owner = null;
 
         try {
-            todo = todoRepository.getById(id);
+            todo = todoRepository.findById(id).orElseThrow();
             owner = todo.getOwner();
-        } catch (EntityNotFoundException ex) {
+        } catch (NoSuchElementException ex) {
             throw new TodoNotFoundException(id);
         }
 
@@ -57,6 +57,14 @@ public class TodoServiceImpl implements TodoService {
             // Validate original, if it's not found or doesn't belong to us
             // it will throw an exception
             Todo original = getTodoById(todo.getId(), user);
+        }
+
+        if (todo.getOwner() == null) {
+            todo.setOwner(user);
+        }
+
+        if (todo.getOwner().getId() != user.getId()) {
+            throw new TodoAccessException(0, user);
         }
 
         return todoRepository.save(todo);

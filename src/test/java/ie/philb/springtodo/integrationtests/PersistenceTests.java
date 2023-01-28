@@ -11,7 +11,6 @@ import ie.philb.springtodo.repository.TodoRepository;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class PersistenceTests {
 
         todo = todoRepository.save(todo);
 
-        Todo found = todoRepository.getById(todo.getId());
+        Todo found = todoRepository.findById(todo.getId()).orElseThrow();
         assertNotNull("Found TODO by Id", found);
 
         assertEquals("Title matches", todo.getTitle(), found.getTitle());
@@ -73,31 +72,12 @@ public class PersistenceTests {
 
         todo = todoRepository.save(todo);
 
-        Todo found = todoRepository.getById(todo.getId());
+        Todo found = todoRepository.findById(todo.getId()).orElseThrow();
         assertNotNull("Found TODO by Id", found);
 
         User foundOwner = found.getOwner();
         assertNotNull("Todo owner retrieved", owner);
         assertEquals(owner.getLogin(), foundOwner.getLogin());
-    }
-
-    @Test
-    @Ignore
-    public void fetchByIdPopulatesTimestamps() {
-
-        // TODO Timestamps not retrieved by getById but are in findByOwner
-        Todo todo = new Todo();
-        todo.setTitle("The Title");
-        todo.setDescription("The Description");
-        todo.setOwner(owner);
-
-        todo = todoRepository.save(todo);
-
-        Todo found = todoRepository.getById(todo.getId());
-        assertNotNull("Found TODO by Id", found);
-
-        assertNotNull("Created timestamp populated", found.getCreated());
-        assertNotNull("Update timestamp populated", found.getUpdated());
     }
 
     @Test
