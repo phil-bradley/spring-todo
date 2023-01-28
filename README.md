@@ -36,4 +36,12 @@ Violations of business level constraints will result in a TodoException being th
 
 For the web based UI, a generic error page is shown when one of these is thrown. In the case of the ReST API, the HTTP status will indicate the error that has occurred.
 
+## Building and execution
+The project can be built with a simple `mvn install` command. This results in a self contained executable jar that includes all dependencies. To run the application, use the command 
 
+java -jar springtodo.jar
+
+This will start up an instance of embedded tomcat listing on port 8822. The port is set using the **server.port** property in the **application.properties** file.
+
+## Implementation Considerations
+A number of the integration tests for the ReST API have been disabled. This is due to difficulties mocking the custom UserDetailsService. There are placholder tests for validating that the appropriate HTTP response is generated (for example, 404 when accessing a non existant entry).
