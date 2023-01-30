@@ -43,7 +43,7 @@ The project is implemented is Java and requires Java 15+ along with the maven bu
 
 java -jar springtodo.jar
 
-This will start up an instance of embedded tomcat listing on port 8822. The port is set using the **server.port** property in the **application.properties** file.
+This will start up an instance of embedded tomcat listening on port 8822. The port is set using the **server.port** property in the **application.properties** file.
 
 ## Implementation Considerations
 A number of the integration tests for the ReST API have been disabled. This is due to difficulties mocking the custom UserDetailsService. There are place-holder tests for validating that the appropriate HTTP response is generated (for example, 404 when accessing a non existent entry).
